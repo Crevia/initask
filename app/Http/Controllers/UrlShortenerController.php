@@ -68,7 +68,7 @@ class UrlShortenerController extends Controller
         //bind it to user session
         DB::table("url_owners")->updateOrInsert($data, $data);
 
-        return redirect()->back()->with("success");
+        return redirect()->to("urls")->with("success");
     }
 
     public function redirectUrl(Request $request)
