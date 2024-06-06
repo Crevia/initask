@@ -12,13 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('defined_urls', function (Blueprint $table) {
-            $table->ulid()->primary();
-            $table->uuid("session")->index("session");
+            $table->ulid("id")->primary();
             $table->string("original", 2083);
-            $table->string("short", 2083);
-            $table->text("hash");
+            $table->string("short", 10)->index();
             $table->softDeletes();
             $table->timestamps();
+        });
+
+        Schema::create('url_owners', function (Blueprint $table) {
+
+            $table->foreignUlid("defined_url_id")->index();
+            $table->ulid("session_id")->index();
         });
     }
 
@@ -28,5 +32,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('defined_urls');
+        Schema::dropIfExists('url_owners');
     }
 };

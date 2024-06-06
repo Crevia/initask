@@ -3,9 +3,9 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import UrlTable from '@/Components/UrlTable.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { ref } from 'vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+
+
 
 defineProps({
     canLogin: {
@@ -63,7 +63,7 @@ const submit = (e) => {
             </template>
         </div>
 
-        <div class="max-w-7xl mx-auto p-6 lg:p-8">
+        <div class="max-w-7xl mx-auto p-6 lg:p-8 ">
             <div class="flex justify-center">
                 <svg viewBox="0 0 62 65" fill="none" xmlns="http://www.w3.org/2000/svg"
                     class="h-16 w-auto bg-gray-100 dark:bg-gray-900">
@@ -73,11 +73,11 @@ const submit = (e) => {
                 </svg>
             </div>
 
-            <div class="mt-16">
-                <div class="grid grid-cols-1 md:grid-cols-1 gap-6 lg:gap-8">
+            <div class="mt-16 ">
+                <div class="grid grid-cols-1 md:grid-cols-1 gap-6 lg:gap-8 ">
                     <div
                         class="scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500">
-                        <form class="w-full" @submit.prevent="submit">
+                        <form class="w-full " @submit.prevent="submit">
                             <div class="w-full mb-6 md:mb-0">
                                 <div class="flex gap-1 justify-between">
                                     <InputLabel class="block uppercase tracking-wide text-white text-xs font-bold mb-2"

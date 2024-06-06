@@ -2,28 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Domains\UrlShortener\Repositories\UrlFastRepository as RepositoriesUrlFastRepository;
+use App\Domains\UrlShortener\Repositories\UrlRepository;
+use App\Domains\UrlShortener\Services\UrlShortenerService;
+use App\Domains\UrlShortener\UrlValidations\SafeUrl\GoogleSafeUrlValidation;
 use App\Http\Requests\UrlRequest;
 use App\Models\DefinedUrl;
 use Faker\Factory;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
-use Faker\Generator as Faker;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+use Symfony\Component\Uid\Ulid;
+use UrlFastRepository;
 
 class UrlShortenerController extends Controller
 {
-
+    protected $sessionKey;
 
 
     public function index(Request $request)
     {
+
+        $sessionKey = substr(Session::getId(), 0, 26);
+
         $request->validate([
             "items" => "integer"
         ]);
-        $urls = DefinedUrl::factory(4)->make()->toArray();
+        $urls = DefinedUrl::where("session_id", $sessionKey)->select("defined_urls.*")
+            ->join("url_owners", "url_owners.defined_url_id", "=", "defined_urls.id")->get()
+            ->toArray();
 
         return Inertia::render('Welcome', [
             'canLogin' => Route::has('login'),
@@ -36,6 +50,23 @@ class UrlShortenerController extends Controller
 
     public function minify(UrlRequest $request)
     {
-        return redirect()->back()->with("success",);
+        //get url
+        $url = $request->get("url");
+        $validators = [];
+        $sessionKey = substr(Session::getId(), 0, 26);
+        $shortnerservice = new UrlShortenerService(new UrlRepository(new DefinedUrl));
+        $safeurlgoogle = new GoogleSafeUrlValidation;
+        $safeurlgoogle->setApiKey(env("GOOGLE_ACCESS_KEY_ID"));
+        $safeurlgoogle->setRepository(new RepositoriesUrlFastRepository(new Cache));
+        $validators[] = $safeurlgoogle;
+        $shortnerservice->setUrlValidators($validators);
+        $urlEntity =   $shortnerservice->shortenUrl($url);
+        $data = ['session_id' => $sessionKey, "defined_url_id" => $urlEntity->getKey()];
+        //bind it to user session
+        DB::table("url_owners")->updateOrInsert($data, $data);
+
+        return redirect()->back()->with("success");
     }
+    ///implement the redirection
+    //in such away that the url is redirected depending on the specifications specified by the handler
 }
