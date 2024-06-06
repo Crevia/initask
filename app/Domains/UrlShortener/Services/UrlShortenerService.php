@@ -54,12 +54,5 @@ class UrlShortenerService
     }
 
 
-    public function generateRedirectUrl($url) : string {
-
-    }
-
-
-    public function handleRedirectRequest($url) : string {
-
-    }
+    
 }

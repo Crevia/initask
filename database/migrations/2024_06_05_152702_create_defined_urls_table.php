@@ -15,6 +15,7 @@ return new class extends Migration
             $table->ulid("id")->primary();
             $table->string("original", 2083);
             $table->string("short", 10)->index();
+            $table->string("full_url", 2083)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

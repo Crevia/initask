@@ -41,3 +41,5 @@ Route::post('urls/minify', [UrlShortenerController::class, 'minify'])
     ->name('urls.minify');
 Route::get('urls', [UrlShortenerController::class, 'index'])
     ->name('urls');
+    Route::fallback([UrlShortenerController::class, 'redirectUrl'])
+    ->name('urls');

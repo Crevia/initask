@@ -10,12 +10,12 @@ export default {
         },
     },
     methods: {
-        async copyToClipboard(text) {
+        async copyToClipboard(text,short) {
 
 
             try {
                 await navigator.clipboard.writeText(text);
-                this.copySuccessMessage = text;
+                this.copySuccessMessage = short;
                 setTimeout(() => {
                     this.copySuccessMessage = "";
                 }, 2000);
@@ -53,7 +53,7 @@ export default {
                         <td class="border px-4 py-2">
                             <div class="flex " :key="item.short">
                                 {{ item.short }}
-                                <div class="w-1 pr-5" @click="copyToClipboard(item.short)">
+                                <div class="w-1 pr-5" @click="copyToClipboard(item.full_url,item.short)">
                                     <svg width="800px" height="800px" viewBox="0 0 24 24" fill="#22c55e"
                                         class="w-7 h-7 stroke-red-500" xmlns="http://www.w3.org/2000/svg">
                                         <path

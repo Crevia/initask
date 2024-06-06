@@ -2,6 +2,7 @@
 
 namespace App\Domains\UrlShortener\Entities;
 
+use App\Domains\UrlShortener\Services\UrlRedirectService;
 use app\Domains\UrlShortener\UrlProperties\UrlHash;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,13 +32,16 @@ class UrlEntity
 
     public function setKey(Model $model): void
     {
-
         $this->key = $model->getKey();
-
     }
 
     public function getKey(): null|string
     {
         return $this->key;
+    }
+
+    public function getFullUrl(): null|string
+    {
+        return (new UrlRedirectService)->redirectUrl($this);
     }
 }

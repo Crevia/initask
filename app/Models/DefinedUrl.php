@@ -11,6 +11,7 @@ class DefinedUrl extends Model
     use HasFactory, HasUlids;
     protected $fillable = [
         "original",
-        "short"
+        "short",
+        "full_url"
     ];
 }

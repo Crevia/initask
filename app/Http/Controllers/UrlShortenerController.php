@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Domains\UrlShortener\Repositories\UrlFastRepository as RepositoriesUrlFastRepository;
 use App\Domains\UrlShortener\Repositories\UrlRepository;
+use App\Domains\UrlShortener\Services\UrlRedirectService;
 use App\Domains\UrlShortener\Services\UrlShortenerService;
 use App\Domains\UrlShortener\UrlValidations\SafeUrl\GoogleSafeUrlValidation;
 use App\Http\Requests\UrlRequest;
@@ -19,6 +20,7 @@ use Inertia\Inertia;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Uid\Ulid;
 use UrlFastRepository;
 
@@ -38,6 +40,7 @@ class UrlShortenerController extends Controller
         $urls = DefinedUrl::where("session_id", $sessionKey)->select("defined_urls.*")
             ->join("url_owners", "url_owners.defined_url_id", "=", "defined_urls.id")->get()
             ->toArray();
+        //pagination implemetation
 
         return Inertia::render('Welcome', [
             'canLogin' => Route::has('login'),
@@ -67,6 +70,20 @@ class UrlShortenerController extends Controller
 
         return redirect()->back()->with("success");
     }
-    ///implement the redirection
-    //in such away that the url is redirected depending on the specifications specified by the handler
+
+    public function redirectUrl(Request $request)
+    {
+        ///implement the redirection
+        //in such away that the url is redirected depending on the specifications specified by the handler
+        $path = $request->path();
+        $rawhash = array_reverse(explode("/", $path));
+
+        throw_if(empty($rawhash[0]), new NotFoundHttpException);
+
+        $responseservice = (new UrlRedirectService())->setRepository(new UrlRepository(new DefinedUrl));
+        $tt = $responseservice->handleRedirectRequest($rawhash[0]);
+        throw_if(empty($tt), new NotFoundHttpException);
+
+        return  redirect($tt->getTo());
+    }
 }

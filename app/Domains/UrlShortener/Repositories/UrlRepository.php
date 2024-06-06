@@ -47,7 +47,8 @@ class UrlRepository implements UrlRepositoryInterface
     {
         return  $this->model::create([
             'original' => $url->getOriginalUrl(),
-            'short' => $url->getShortenedUrl()->getValue()
+            'short' => $url->getShortenedUrl()->getValue(),
+            "full_url" => $url->getFullUrl()
         ]);
     }
 }
